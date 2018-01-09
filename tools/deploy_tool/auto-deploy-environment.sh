@@ -30,10 +30,20 @@ mkdir configs
 echo "拉取代码"
 git clone https://github.com/luwenchang/service-template-py.git
 
-echo /home/dev/service-template-py/tools/deploy_tool/bashrc.txt >> /home/dev/.bashrc
+echo "进入项目目录"
+cd service-template-py
+echo "切换到指定分支 dev"
+git checkout dev
+
+
+cat /home/dev/service-template-py/tools/deploy_tool/bashrc.txt >> /home/dev/.bashrc
 
 cp /home/dev/service-template-py/tools/deploy_tool/bash_profile.txt /home/dev/.bash_profile
 
+
 EOF
+
+pip install -r  /home/dev/service-template-py/requirements.txt
+
 
 
