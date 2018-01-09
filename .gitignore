@@ -99,3 +99,27 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Pycharm IDE cache
+.idea
+.idea/
+
+# Mac system folder description file.
+.DS_Store
+
+# Redis dump file
+dump.rdb
+
+# 开发时的临时测试文件
+tt_*.py
+
+# apidoc 生成的 API 文档文件
+apidocs/*/*
+apidocs/*.*
+
+# supervisord 管理的程序日志文件
+logs/*.out
+logs/*.out.*
+logs/*.err
+logs/*.err.*
+
