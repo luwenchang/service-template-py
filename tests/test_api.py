@@ -11,7 +11,7 @@ from base64 import b64encode
 from flask import url_for
 from app import create_app, db
 from app.models.users import User, UserLocalAuth
-from app.utils.auth import str_encrypt
+from app.utils.auth import get_password_md5
 
 
 from datetime import datetime
@@ -44,18 +44,26 @@ class APITestCase(unittest.TestCase):
         这是测试完成之后会自动运行的方法，本方法将删除 程序上下文和数据库
         '''
         db.session.remove()
-        # db.drop_all()
+        db.drop_all()
         self.app_context.pop()
 
-    def get_api_headers(self, username, password):
+    def get_api_headers(self, auth_type, account=None, password=None, token=None):
         '''获取 api header'''
-        return {
-            'Authorization': 'Basic ' + b64encode(
-                (username + ':' + password).encode('utf-8')
-            ).decode('utf-8'),
+
+        headers = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Auth-Type' : auth_type
         }
+
+        if account and password:
+            headers['Authorization'] = 'Basic ' + b64encode(
+                (account + ':' + password).encode('utf-8') ).decode('utf-8')
+
+        if token:
+            headers['Authorization'] = token
+
+        return headers
 
 
     def add_users(self, count=100):
@@ -75,7 +83,7 @@ class APITestCase(unittest.TestCase):
 
             u = User(id=user_id, nickname=username, email=email, mobile=mobile, name=username, is_disabled=0)
 
-            ul = UserLocalAuth(user_id=u.id, xname=uuid.uuid4().hex, password=str_encrypt(username))
+            ul = UserLocalAuth(user_id=u.id, xname=uuid.uuid4().hex, password=get_password_md5(username))
 
 
             db.session.add_all([u, ul])
@@ -106,8 +114,8 @@ class APITestCase(unittest.TestCase):
         u1 = user_list[0]
 
         u1_login_info = u1.local_login.first()
-        self.assertTrue(u1_login_info.verify_password(str_encrypt(u1.nickname)))
-        self.assertFalse(u1_login_info.verify_password(str_encrypt('121212')))
+        self.assertTrue(u1_login_info.verify_password(get_password_md5(u1.nickname)))
+        self.assertFalse(u1_login_info.verify_password(get_password_md5('121212')))
 
 
     def test_user_reset_password(self):
@@ -117,12 +125,12 @@ class APITestCase(unittest.TestCase):
 
         login_info = u.local_login.first()
 
-        self.assertTrue(login_info.verify_password(str_encrypt(u.nickname)))
+        self.assertTrue(login_info.verify_password(get_password_md5(u.nickname)))
 
-        login_info.reset_password(str_encrypt('12ABC'))
+        login_info.reset_password(get_password_md5('12ABC'))
         db.session.add(login_info)
-        self.assertTrue(login_info.verify_password(str_encrypt('12ABC')))
-        self.assertFalse(login_info.verify_password(str_encrypt(u.nickname)))
+        self.assertTrue(login_info.verify_password(get_password_md5('12ABC')))
+        self.assertFalse(login_info.verify_password(get_password_md5(u.nickname)))
 
 
     def test_api_GetToken(self):
@@ -134,9 +142,6 @@ class APITestCase(unittest.TestCase):
         # 验证密码错误的请求
         response = self.client.post(
             url_for('api_www.gettoken'),
-            # headers=self.get_api_headers('john@example.com', 'dog')
-            headers=self.get_api_headers(u.nickname, str_encrypt(u.nickname))
+            headers=self.get_api_headers(auth_type='email-password'  , account=u.email, password=get_password_md5(u.nickname))
         )
-        print os.linesep
-        print response
         self.assertTrue(response.status_code == 200)

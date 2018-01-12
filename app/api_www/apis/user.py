@@ -31,7 +31,7 @@ class GetUser(Resource):
         # if id != g.current_user['id']:
         #     logger.error("无效的请求，禁止非法获取用其他用户信息")
         #     return exceptions.InvalidRequest("无效的请求，禁止非法获取用其他用户信息").dict
-
+        #
         user = User.query.filter_by(id=g.current_user['id']).first()
 
         logger.info('已获取用户信息')

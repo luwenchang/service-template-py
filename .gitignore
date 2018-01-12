@@ -123,3 +123,6 @@ logs/*.out.*
 logs/*.err
 logs/*.err.*
 
+# supervisord 的pid文件
+supervisord.pid
+

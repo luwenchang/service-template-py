@@ -10,14 +10,17 @@ from app.models.users import User
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
+
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 default_config_name=''
 
 app = create_app(default_config_name)
-# app.debug = False
-app.debug = True
+app.debug = False
+# app.debug = True
+
+# app.logger.removeHandler(app.logger)
 
 # 加载一些命令行工具包
 manager = Manager(app)

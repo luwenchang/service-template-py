@@ -36,6 +36,8 @@ def create_app(default_config_name):
     app.register_blueprint(api_www_v1, url_prefix='/wwwapi/v1')
 
 
+
+
     # 附加路由和自定义页面
     return app
 

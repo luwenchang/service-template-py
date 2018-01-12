@@ -26,85 +26,87 @@ sys.setdefaultencoding("utf-8")
 
 auth = HTTPBasicAuth()
 
+def verify_login_account_password(password, email=None, mobile=None):
+    '''验证用户名密码方式登录的用户'''
+    if email:
+        u = User.query.filter_by(email=email).first()
+    elif mobile:
+        u = User.query.filter_by(mobile=mobile).first()
+    else:
+        logger.error('密码验证错误，缺少登录帐号')
+        return False
+
+    login_info = u.local_login.first()
+    if not login_info.verify_password(password):
+        return False
+
+    g.current_user = u.to_dict()
+    g.token_used = False
+    return True
+
+
+def verify_login_token(token):
+    '''验证Token方式登录的用户'''
+    # 缓存中的 token
+    kvs = token_help.get_token_cache('auth:token:{}'.format(token))
+    # 不存在该Token
+    if not kvs:
+        logger.error("当前Token已失效或不存在")
+        return False
+    # 存在Token，则取出对应用户
+    user = json.loads(kvs.get('user'))
+
+    g.token_used = True
+    # 记录当前Token值
+    g.current_token = token
+    # g.current_user = User.query.filter_by(id=user_id).first()
+    g.current_user = user
+    return True
+
+
+def verify_login_ak():
+    '''验证ak方式登录用户的 请求签名'''
+    pass
+
+
+def get_json_body():
+    try:
+        # 获取 Body 数据
+        body = request.get_json()
+    except Exception, e:
+        # logger.error('缺少请参数')
+        body = None
+
+    return body
+
+
+
 @auth.verify_password
 def verify_password(login_tag_account, password):
     '''验证用户密码'''
-    # Token
+
     token = request.headers.get("X-Auth-Token")
-    if token:
-        # 此时属于验证token
-        kvs = token_help.get_token_cache('auth:token:{}'.format(token))
+    auth_type = request.headers.get("X-Auth-Type")
 
-        # 不存在该Token
-        if not kvs:
-            logger.error("当前Token已失效或不存在")
-            return False
-        user = json.loads(kvs.get('user'))
+    if auth_type == 'email-password':
+        return verify_login_account_password(email=login_tag_account, password=password)
 
-        g.token_used = True
-        # 记录当前Token值
-        g.current_token = token
-        # g.current_user = User.query.filter_by(id=user_id).first()
-        g.current_user = user
-        return True
+    elif auth_type == 'mobile-password':
+        return verify_login_account_password(mobile=login_tag_account, password=password)
 
+    elif auth_type == 'ak':
+        pass
+        # return verify_login_ak()
+
+    # elif auth_type == 'weibo-token':
+    #     pass
+    # elif auth_type == 'weixin-token':
+    #     pass
     else:
-        # 获取 Body 数据
-        body = request.get_json()
-        # 验证 用户名密码
-        if not body:
-            logger.error("缺少请求参数体")
-            return False
+        return verify_login_token(token)
 
-        # 实验室 ID
-        lab_id = body.get('lab_id')
-        # 用户名
-        account = body.get('account')
-        # 密码
-        password = body.get('password')
 
-        # 此时属于验证 用户名/密码
-        if not lab_id or  not account or  not password:
-            # 实验室ID 和 用户名  和 密码不能为空
-            logger.error("认证参数缺失")
-            return False
-
-        # 查找用户信息
-        user = User.query.filter(
-            and_(
-                User.internalUserId == lab_id,
-                or_(
-                    User.username == account,
-                    User.mobile == account,
-                    User.email == account
-                )
-            )
-        ).first()
-        if not user:
-            # 未找到指定用户
-            g.current_user = None
-            return False
-
-        if not user.verify_password(password):
-            # 密码错误
-            g.current_user = None
-            logger.error("密码错误验证失败")
-            return False
-
-        g.token_used = False
-        g.current_token = None
-        cur_user = user.to_dict()
-        g.current_user = {
-            'id' : cur_user['id'],
-            'internalUserId' : cur_user['internalUserId'],
-            'groupId' : cur_user['groupId'],
-            'isLabUser' : cur_user['isLabUser'],
-            'isIndependent' : cur_user['isIndependent'],
-            'noBalanceQuota' : cur_user['noBalanceQuota'],
-            'isDisabled' : cur_user['isDisabled'],
-        }
-
-    return True
+    return False
 
 
 
@@ -146,7 +148,7 @@ def before_request():
     else:
         logger.info('权限验证成功')
     # 默认提取请求体
-    g.json_data = request.get_json()
+    g.json_data = get_json_body()
 
 
 

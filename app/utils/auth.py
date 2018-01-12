@@ -38,17 +38,17 @@ def get_password_md5(password):
     return m2.hexdigest()
 
 
-def generate_token(data, expiration=3600):
-    '''生成一个令牌'''
-    s = Serializer(current_app.config['TOKEN_SECRET_KEY'], expiration)
-    # return s.dumps({'confirm': self.users_id})
-    return s.dumps(data)
-
-def confirm_token(token):
-    '''认证令牌，并返回令牌中存储的数据'''
-    s = Serializer(current_app.config['TOKEN_SECRET_KEY'])
-    try:
-        data = s.loads(token)
-    except:
-        return False
-    return data
+# def generate_token(data, expiration=3600):
+#     '''生成一个令牌'''
+#     s = Serializer(current_app.config['TOKEN_SECRET_KEY'], expiration)
+#     # return s.dumps({'confirm': self.users_id})
+#     return s.dumps(data)
+#
+# def confirm_token(token):
+#     '''认证令牌，并返回令牌中存储的数据'''
+#     s = Serializer(current_app.config['TOKEN_SECRET_KEY'])
+#     try:
+#         data = s.loads(token)
+#     except:
+#         return False
+#     return data

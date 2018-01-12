@@ -31,17 +31,19 @@ with open(SERVICE_CONFIG_PATH) as f:
         toolkit.obj_update(_d, Cfg)
 
 class Config:
+    DEBUG = True
+
     # 设置Logger的日志名称
-    LOGGER_NAME = 'icl'
-    ICL_SECRET_KEY = Cfg.get('webServer', {}).get('secret')
+    LOGGER_NAME = 'V'
+    SECRET_KEY = Cfg.get('webServer', {}).get('secret')
     # 加盐加密字符串格式
-    ICL_ENCRYPT_STR_FORMAT = Cfg.get('webServer', {}).get('str_format')
+    ENCRYPT_STR_FORMAT = Cfg.get('webServer', {}).get('str_format')
     # Token 的加密密匙
     TOKEN_SECRET_KEY= Cfg.get('webServer', {}).get('token_secret')
 
     # AK 加解密
-    ICL_AES_KEY = Cfg.get('AES', {}).get('key')
-    ICL_AES_IV = Cfg.get('AES', {}).get('iv')
+    AES_KEY = Cfg.get('AES', {}).get('key')
+    AES_IV = Cfg.get('AES', {}).get('iv')
 
     # 数据库连接池的大小。默认是数据库引擎的默认值 （通常是 5）
     SQLALCHEMY_POOL_SIZE = 5
@@ -87,16 +89,16 @@ class Config:
 
 class TestConfig:
     # 设置Logger的日志名称
-    LOGGER_NAME = 'icl'
-    ICL_SECRET_KEY = Cfg.get('webServer', {}).get('secret')
+    LOGGER_NAME = 'VTest'
+    SECRET_KEY = Cfg.get('webServer', {}).get('secret')
     # 加盐加密字符串格式
-    ICL_ENCRYPT_STR_FORMAT = Cfg.get('webServer', {}).get('str_format')
+    ENCRYPT_STR_FORMAT = Cfg.get('webServer', {}).get('str_format')
     # Token 的加密密匙
     TOKEN_SECRET_KEY= Cfg.get('webServer', {}).get('token_secret')
 
     # AK 加解密
-    ICL_AES_KEY = Cfg.get('AES', {}).get('key')
-    ICL_AES_IV = Cfg.get('AES', {}).get('iv')
+    AES_KEY = Cfg.get('AES', {}).get('key')
+    AES_IV = Cfg.get('AES', {}).get('iv')
 
     # 数据库连接池的大小。默认是数据库引擎的默认值 （通常是 5）
     # SQLALCHEMY_POOL_SIZE = 5

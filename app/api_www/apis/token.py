@@ -8,7 +8,6 @@ from app.utils import token_help, redis_help, exceptions
 
 from .. import logger
 
-
 # 舍弃 @marshal_with 方式原因是： 当根据请求解惑的不可用操作需要返回 错误数据时。返回值被强制更改了
 
 
@@ -19,7 +18,11 @@ class GetToken(Resource):
             return  exceptions.ForbiddenAction('Token 登录用户禁止此项操作').dict
 
         expiration = 3600
-        token = token_help.generate_auth_token(current_app.config['ICL_SECRET_KEY'], user_id=g.current_user['id'], expire=expiration)
+        token = token_help.generate_auth_token(
+            current_app.config['SECRET_KEY'],
+            user_id=g.current_user['id'],
+            expire=expiration
+        )
         # 根据Token值，设置缓存用户信息的Key
         key = 'auth:token:{}'.format(token)
         # 缓存 用户信息
