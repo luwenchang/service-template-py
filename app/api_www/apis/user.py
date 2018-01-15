@@ -12,7 +12,6 @@ from app.models.users import User
 
 from app import db
 
-from .. import logger
 
 from app.utils import exceptions
 from app.utils.validator import check_body
@@ -29,12 +28,12 @@ _response_fields = ['id', 'internalUserId', 'labUserSignInToken', 'avatarFileURL
 class GetUser(Resource):
     def post(self):
         # if id != g.current_user['id']:
-        #     logger.error("无效的请求，禁止非法获取用其他用户信息")
+        #     current_app.logger.error("无效的请求，禁止非法获取用其他用户信息")
         #     return exceptions.InvalidRequest("无效的请求，禁止非法获取用其他用户信息").dict
         #
         user = User.query.filter_by(id=g.current_user['id']).first()
 
-        logger.info('已获取用户信息')
+        current_app.logger.info('已获取用户信息')
         return {
             "User" : user.to_dict(_response_fields)
         }

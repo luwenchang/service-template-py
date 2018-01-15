@@ -31,7 +31,6 @@ with open(SERVICE_CONFIG_PATH) as f:
         toolkit.obj_update(_d, Cfg)
 
 class Config:
-    DEBUG = True
 
     # 设置Logger的日志名称
     LOGGER_NAME = 'V'

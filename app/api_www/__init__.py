@@ -7,7 +7,8 @@ from flask_restful import Api
 
 from app.utils.loggers import get_logger
 
-logger = get_logger('api_www')
+# logger = get_logger('api_www')
+
 
 api_bp = Blueprint('api_www', __name__)
 

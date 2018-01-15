@@ -11,7 +11,11 @@ sudo apt-get update
 echo "索引更新完成"
 
 echo "开始安装程序的基础运行环境必备包"
-sudo apt-get install -y python-pip python-dev libmysqlclient-dev git  redis-server
+sudo apt-get install -y python-pip python-dev libmysqlclient-dev git redis-server
+
+echo "安装服务部署必须的服务 nginx, gunicorn, supervisor, mysql-server"
+sudo apt-get install nginx gunicorn python-gevent supervisor mysql-server
+
 
 echo "准备创建用户：dev"
 useradd -d /home/dev -m dev -s /bin/bash

@@ -3,6 +3,10 @@
 __author__ = 'vincent'
 
 import os
+import logging.handlers
+
+
+from app.utils.loggers import log_hander
 import sys
 from app import create_app, db
 from app.models.users import User
@@ -17,10 +21,11 @@ sys.setdefaultencoding("utf-8")
 default_config_name=''
 
 app = create_app(default_config_name)
-app.debug = False
-# app.debug = True
 
-# app.logger.removeHandler(app.logger)
+if log_hander not in app.logger.handlers:
+    app.logger.addHandler(log_hander)
+
+app.logger.setLevel(logging.DEBUG)
 
 # 加载一些命令行工具包
 manager = Manager(app)

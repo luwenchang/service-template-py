@@ -14,7 +14,7 @@ from flask_httpauth import HTTPBasicAuth
 from ..models.users import User
 
 from . import api_bp
-from . import logger
+# from . import logger
 
 from ..utils import token_help
 from app.utils import exceptions
@@ -33,7 +33,7 @@ def verify_login_account_password(password, email=None, mobile=None):
     elif mobile:
         u = User.query.filter_by(mobile=mobile).first()
     else:
-        logger.error('密码验证错误，缺少登录帐号')
+        current_app.logger.error('密码验证错误，缺少登录帐号')
         return False
 
     login_info = u.local_login.first()
@@ -51,7 +51,7 @@ def verify_login_token(token):
     kvs = token_help.get_token_cache('auth:token:{}'.format(token))
     # 不存在该Token
     if not kvs:
-        logger.error("当前Token已失效或不存在")
+        current_app.logger.error("当前Token已失效或不存在")
         return False
     # 存在Token，则取出对应用户
     user = json.loads(kvs.get('user'))
@@ -74,7 +74,7 @@ def get_json_body():
         # 获取 Body 数据
         body = request.get_json()
     except Exception, e:
-        # logger.error('缺少请参数')
+        # current_app.logger.error('缺少请参数')
         body = None
 
     return body
@@ -137,16 +137,16 @@ def create_request_id(f):
 @create_request_id
 @auth.login_required
 def before_request():
-
+    current_app.logger.info('强制打印数据验证日志')
     if not g.current_user:
-        logger.warning(str(exceptions.LoginFailed()))
+        current_app.logger.warning(str(exceptions.LoginFailed()))
         return exceptions.LoginFailed().dict
 
     elif g.current_user.get('isDisabled'):
-        logger.warning(str(exceptions.AccountDisabled()))
+        current_app.logger.warning(str(exceptions.AccountDisabled()))
         return exceptions.AccountDisabled().dict
     else:
-        logger.info('权限验证成功')
+        current_app.logger.info('权限验证成功')
     # 默认提取请求体
     g.json_data = get_json_body()
 
