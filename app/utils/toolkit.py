@@ -77,8 +77,10 @@ def obj_update(s, d):
 def filter_table_field(source, fileds=[]):
     '''过滤表中的字段值，仅显示 fileds中展示的值'''
     new_source = {}
+    source_keys = source.keys()
     for k in fileds:
-        new_source[k] = source.get(k)
+        if k in source_keys:
+            new_source[k] = source.get(k)
     return new_source
 
 
