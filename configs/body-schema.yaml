@@ -1,0 +1,107 @@
+example:
+  username:
+    type: string
+
+  type:
+    nullable: True     #$allowNull
+    allowed:     # $in
+      - 'zhuyunOperator'
+      - 'labOwner'
+      - 'distributor'
+  labVersion:
+    type: string
+    nullable: True     #$allowNull
+    allowed:     # $in
+      - 'base'
+      - 'pro'
+      - 'custom'
+  labName:
+    nullable: True     #$allowNull
+    maxlength: 100
+  username:
+    minlength: 1
+    maxlength: 128
+    regex: '^[a-z][a-zA-Z0-9\-_]{0,127}'
+  password:
+    $isLength: 32
+  email:
+    nullable: True     #$allowNull
+    maxlength: 128
+    $isEmail: True
+  mobile:
+    nullable: True     #$allowNull
+    $isLength: 11
+  name:
+    nullable: True     #$allowNull
+    maxlength: 512
+  company:
+    nullable: True     #$allowNull
+    maxlength: 512
+  resourcePoolId:
+    $isLength: 32
+  labUserCountQuota:
+    $isPositiveIntegerOrZero: True
+    max: 1000000
+  isDisabled:
+    allowed:     # $in
+      - 1
+      - 0
+
+
+test:
+  todo:
+    get:
+      todo_id:
+        type: string
+    post:
+      todo_id:
+        type: string
+      task:
+        type: email
+    put:
+      todo_id:
+        type: string
+      task:
+        type: email
+
+
+
+user:
+  SetUser:
+    email:
+      type: email
+
+    mobile:
+      type: string
+
+    avatarFileURL:
+      type: string
+
+    note:
+      type: string
+      empty: True
+
+    company:
+      type: string
+
+    intro:
+      type: string
+
+    intro:
+      type: string
+
+  GetUser:
+    id:
+      type: string
+      islength: 4
+
+    usertype:
+      type: string
+      allowed:
+        - Basic
+        - Intermediate
+        - Advanced
+
+    email:
+      type: email
+
