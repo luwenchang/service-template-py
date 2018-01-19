@@ -27,7 +27,7 @@ example:
   email:
     nullable: True     #$allowNull
     maxlength: 128
-    $isEmail: True
+    isEmail: True
   mobile:
     nullable: True     #$allowNull
     $isLength: 11
@@ -68,27 +68,30 @@ test:
 
 user:
   SetUser:
+    nickname:
+      type: 'string'
+      nullable: True
     email:
-      type: email
-
+      type: 'email'
+      nullable: True     #$allowNull
+      maxlength: 128
     mobile:
-      type: string
-
-    avatarFileURL:
-      type: string
-
-    note:
-      type: string
-      empty: True
-
-    company:
-      type: string
-
+      regex: '^[0-9]{3,15}'
+      nullable: True     #$allowNull
+      islength: 11
+    name:
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 512
     intro:
-      type: string
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 10000
 
-    intro:
-      type: string
+    head_portrait:
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 200
 
   GetUser:
     id:

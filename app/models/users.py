@@ -26,7 +26,7 @@ class User(db.Model, TableBase):
     #
 
     # 用户本地用户密码登录 相关
-    local_login = db.relationship('UserLocalAuth', backref='user', lazy='dynamic')
+    local_login = db.relationship('UserLocalAuth', backref='user', cascade='delete, delete-orphan', lazy='dynamic')
 
     #
     # # 用户登录历史记录

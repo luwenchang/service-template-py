@@ -18,19 +18,12 @@ from app.utils.validator import check_body
 from app import BodySchema
 
 # User API 返回数据参数处理
-_response_fields = ['id', 'internalUserId', 'labUserSignInToken', 'avatarFileURL', 'username', 'email', 'mobile',
-                  'note', 'name', 'company', 'locale', 'position', 'intro', 'groupId',
-                  'lastSignInTime', 'lastSeenTime', 'isLabUser', 'isIndependent', 'noBalanceQuota',
-                  'labUserBalanceQuota', 'isDisabled', 'cache_labUserBalance',
-                  'createTimestamp']
+_response_fields = ['id', 'nickname', 'email', 'mobile', 'note', 'name', 'intro',
+                  'head_portrait', 'is_disabled', 'create_timestamp']
 
 
 class GetUser(Resource):
     def post(self):
-        # if id != g.current_user['id']:
-        #     current_app.logger.error("无效的请求，禁止非法获取用其他用户信息")
-        #     return exceptions.InvalidRequest("无效的请求，禁止非法获取用其他用户信息").dict
-        #
         user = User.query.filter_by(id=g.current_user['id']).first()
 
         current_app.logger.info('已获取用户信息')
@@ -39,14 +32,16 @@ class GetUser(Resource):
         }
 
 
-
-
 class SetUser(Resource):
+
+    @check_body('user.SetUser')
     def post(self):
 
-        args = check_body(request.get_json(), BodySchema['user']['SetUser'])
-
         user = User.query.filter_by(id=g.current_user['id']).first()
+        args = g.json_data
+
+        if args.get('nickname'):
+            user.email = args.get('nickname')
 
         if args.get('email'):
             user.email = args.get('email')
@@ -54,21 +49,23 @@ class SetUser(Resource):
         if args.get('mobile'):
             user.mobile = args.get('mobile')
 
-        if args.get('avatarFileURL'):
-            user.avatarFileURL = args.get('avatarFileURL')
 
         if args.get('note'):
             user.note = args.get('note')
 
-        if args.get('company'):
-            user.company = args.get('company')
+
+        if args.get('name'):
+            user.name = args.get('name')
+
 
         if args.get('intro'):
             user.intro = args.get('intro')
 
+        if args.get('head_portrait'):
+            user.head_portrait = args.get('head_portrait')
+
+
         db.session.add(user)
         db.session.commit()
 
-        return {
-            "User" : user.to_dict(_response_fields)
-        }
+        return {}

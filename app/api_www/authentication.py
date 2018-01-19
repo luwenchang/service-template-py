@@ -102,7 +102,7 @@ def verify_password(login_tag_account, password):
     #     pass
     # elif auth_type == 'weixin-token':
     #     pass
-    else:
+    elif auth_type == 'token':
         return verify_login_token(token)
 
 
