@@ -25,7 +25,9 @@ from flask import url_for
 
 from sqlalchemy.sql import and_
 from sqlalchemy.sql import or_
+from sqlalchemy.dialects.mysql import TINYINT
 from .. import Cfg
+
 
 from .. import db
 from datetime import datetime

@@ -67,6 +67,43 @@ test:
 
 
 user:
+  AddUser:
+    nickname:
+      type: 'string'
+      required: True     # 这个参数必填
+      nullable: False    # True：允许为空   False：不允许为空
+    password:
+      type: 'string'
+      required: True     # 这个参数必填
+      nullable: True
+      minlength: 32      # 设置字符串最小长度
+      maxlength: 128     # 设置字符串最大长度
+    email:
+      type: 'email'
+      required: True     # 这个参数必填
+      nullable: False     # True：允许为空   False：不允许为空
+      maxlength: 128
+    mobile:
+      required: True     # 这个参数必填
+      regex: '^[0-9]{3,15}'
+      nullable: False     # True：允许为空   False：不允许为空
+      islength: 11
+    name:
+      type: 'string'
+      nullable: False     # True：允许为空   False：不允许为空
+      minlength: 3        # 设置字符串最小长度
+      maxlength: 512      # 设置字符串最大长度
+    intro:
+      type: 'string'
+      nullable: True     # True：允许为空   False：不允许为空
+      maxlength: 10000   # 设置字符串最大长度
+
+    head_portrait:
+      type: 'string'
+      nullable: True     # True：允许为空   False：不允许为空
+      maxlength: 200
+
+
   SetUser:
     nickname:
       type: 'string'

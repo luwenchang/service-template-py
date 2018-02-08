@@ -31,8 +31,8 @@ class TokenAPITestCase(APITest):
 
         # 验证密码错误的请求
         response = self.client.post(
-            url_for('api_www.gettoken'),
-            headers=self.get_api_headers(auth_type='email-password'  , account=u.email, password=get_password_md5(u.nickname))
+            '/wwwapi/v1/GetToken',
+            headers=self.get_api_headers(auth_type='email-password'  , account=u.email, password=get_password_md5(self.default_password))
         )
         self.assertTrue(response.status_code == 200)
 
@@ -47,18 +47,17 @@ class TokenAPITestCase(APITest):
 
         # 获取Token
         response = self.client.post(
-            url_for('api_www.gettoken'),
+            '/wwwapi/v1/GetToken',
             headers=self.get_api_headers(auth_type='email-password', account=u.email,
-                                         password=get_password_md5(u.nickname))
+                                         password=get_password_md5(self.default_password))
         )
         self.assertTrue(response.status_code == 200)
         res = json.loads(response.data)
         token = res.get('token')
 
-
         # 通过获取 用户信息来验证 Token
         response = self.client.post(
-            url_for('api_www.getuser'),
+            '/wwwapi/v1/GetUser',
             headers=self.get_api_headers(auth_type='token', token=token)
         )
         self.assertTrue(response.status_code == 200)

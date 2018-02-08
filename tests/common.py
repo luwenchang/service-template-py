@@ -13,9 +13,10 @@ from app import create_app, db
 from app.models.users import User, UserLocalAuth
 from app.utils.auth import get_password_md5
 
-
+import forgery_py
 from datetime import datetime
 import uuid
+
 
 
 class APITest(unittest.TestCase):
@@ -39,6 +40,9 @@ class APITest(unittest.TestCase):
         # 因 API 的测试无需浏览器支持，所以此处可以去掉 参数 use_cookies
         self.client = self.app.test_client()
 
+        # 设置所有用户的默认密码
+        self.default_password = 'abc123'
+
     def tearDown(self):
         '''
         这是测试完成之后会自动运行的方法，本方法将删除 程序上下文和数据库
@@ -47,7 +51,7 @@ class APITest(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def get_api_headers(self, auth_type, account=None, password=None, token=None):
+    def get_api_headers(self, auth_type=None, account=None, password=None, token=None):
         '''获取 api header'''
 
         headers = {
@@ -56,10 +60,9 @@ class APITest(unittest.TestCase):
             'X-Auth-Type' : auth_type
         }
 
-        if auth_type != 'token':
+        if auth_type and auth_type != 'token':
             headers['Authorization'] = 'Basic ' + b64encode(
                 (account + ':' + password).encode('utf-8') ).decode('utf-8')
-
 
         if token:
             headers['X-Auth-Token'] = token
@@ -67,32 +70,58 @@ class APITest(unittest.TestCase):
         return headers
 
 
+    # def add_users(self, count=100):
+    #     '''该方法用于生成大批量的虚拟信息'''
+    #     from sqlalchemy.exc import IntegrityError
+    #     from random import seed
+    #     import random
+    #     result = []
+    #
+    #     seed()
+    #     for i in range(count):
+    #         username = forgery_py.name.full_name()
+    #         user_id = uuid.uuid4().hex
+    #         mobile = int(random.random() * 100000000)
+    #         email = forgery_py.internet.email_address()
+    #
+    #         u = User(id=user_id, nickname=username, email=email, mobile=mobile, name=username, is_disabled=0)
+    #
+    #         ul = UserLocalAuth(user_id=u.id, xname=uuid.uuid4().hex, password=get_password_md5(self.default_password))
+    #
+    #
+    #         db.session.add_all([u, ul])
+    #
+    #         try:
+    #             db.session.commit()
+    #             result.append(user_id)
+    #         except IntegrityError:
+    #             db.session.rollback()
+    #
+    #     return result
+
+
     def add_users(self, count=100):
         '''该方法用于生成大批量的虚拟信息'''
         from sqlalchemy.exc import IntegrityError
         from random import seed
-        import forgery_py
         import random
         result = []
-
         seed()
         for i in range(count):
-            username = forgery_py.name.full_name()
-            user_id = uuid.uuid4().hex
-            mobile = int(random.random() * 100000000)
-            email = forgery_py.internet.email_address()
-
-            u = User(id=user_id, nickname=username, email=email, mobile=mobile, name=username, is_disabled=0)
-
-            ul = UserLocalAuth(user_id=u.id, xname=uuid.uuid4().hex, password=get_password_md5(username))
-
-
-            db.session.add_all([u, ul])
-
-            try:
-                db.session.commit()
-                result.append(user_id)
-            except IntegrityError:
-                db.session.rollback()
-
+            new_user = {
+                'nickname': forgery_py.internet.user_name(),
+                'email': forgery_py.internet.email_address(),
+                'mobile': int(random.random() * 100000000),
+                'name': forgery_py.name.full_name(),
+                'password': get_password_md5(self.default_password),
+            }
+            # 获取Token
+            response = self.client.post(
+                '/wwwapi/v1/AddUser',
+                headers=self.get_api_headers(),
+                data=json.dumps(new_user)
+            )
+            self.assertTrue(response.status_code == 200)
+            new_user['password'] = self.default_password
+            result.append(new_user)
         return result
