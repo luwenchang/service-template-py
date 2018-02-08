@@ -6,11 +6,13 @@ from flask import jsonify, g, current_app
 from flask_restful import Resource, reqparse, marshal_with, fields, marshal_with_field
 from app.utils import token_help, redis_help, exceptions
 
+from ..authentication import auth
 
 # 舍弃 @marshal_with 方式原因是： 当根据请求解惑的不可用操作需要返回 错误数据时。返回值被强制更改了
 
 
 class GetToken(Resource):
+    @auth.login_required
     def post(self):
         if g.token_used:
             current_app.logger.error('Token 登录用户禁止此项操作')

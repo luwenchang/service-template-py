@@ -3,24 +3,14 @@ __author__ = 'vincent'
 from flask import g
 
 except_dict = {
-    'LoginFailed': {
-        "message" : "登录验证失败,请检查Token是否已过期，或用户名密码是否正确",
-    },
-    'NeedLogin': {
-        'message': "当前请求需要先登陆"
-    },
-    'AccountDisabled': {
-        'message': "帐号被禁用，请联系管理员"
-    },
-    'InvalidRequest' : {
-        'message' : "无效的请求"
-    },
-    'ForbiddenAction' : {
-        'message' : "禁止的操作"
-    },
-    'ParamsError' : {
-        'message' : "参数错误"
-    }
+    'LoginFailed': {"message" : "登录验证失败,请检查Token是否已过期，或用户名密码是否正确",},
+    'NeedLogin': {'message': "当前请求需要先登陆"},
+    'AccountDisabled': {'message': "帐号被禁用，请联系管理员"},
+    'InvalidRequest' : {'message' : "无效的请求"},
+    'ForbiddenAction' : {'message' : "禁止的操作"},
+    'ParamsError' : {'message' : "参数错误"},
+    'UserAlreadyExists' : {'message' : "当前用户已存在"},
+    'UserAddedFailed' : {'message' : "当前用户已存在"}
 }
 
 

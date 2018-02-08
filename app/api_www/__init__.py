@@ -21,6 +21,7 @@ from .apis.token import GetToken
 
 from .apis.user import GetUser
 from .apis.user import SetUser
+from .apis.user import AddUser
 
 
 
@@ -56,9 +57,10 @@ from .apis.user import SetUser
         "message": "Internal Server Error"
     }
  """
+
 api.add_resource(GetToken, '/GetToken')
 
-
+api.add_resource(AddUser, '/AddUser')
 
 api.add_resource(GetUser, '/GetUser')
 

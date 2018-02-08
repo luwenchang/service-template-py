@@ -37,8 +37,7 @@ def verify_login_account_password(password, email=None, mobile=None):
         return False
 
     login_info = u.local_login.first()
-    if not login_info.verify_password(password):
-        return False
+    if not login_info.verify_password(password): return False
 
     g.current_user = u.to_dict()
     g.token_used = False
@@ -75,7 +74,7 @@ def get_json_body():
         body = request.get_json()
     except Exception, e:
         # current_app.logger.error('缺少请参数')
-        body = None
+        body = {}
 
     return body
 
@@ -131,25 +130,20 @@ def create_request_id(f):
     return decorated
 
 
-# 通过如下方法，api 蓝本中所有路由都能进行自动认证。
+# 通过如下方法，api 蓝本中所有路由都  先进行创建唯一请求ID
 # 而且作为附加认证，before_request 处理程序还会拒绝已通过认证，但没有确认账户的用户
 @api_bp.before_request
 @create_request_id
-@auth.login_required
 def before_request():
-    current_app.logger.info('强制打印数据验证日志')
-    if not g.current_user:
-        current_app.logger.warning(str(exceptions.LoginFailed()))
-        return exceptions.LoginFailed().dict
+    # 添加用户时未验证
+    # TODO 实际应该在验证时判断 是否需要用户登录，例如注册用户，此处暂未处理
+    if g.get('current_user'):
+        if g.current_user.get('is_disabled'):
+            current_app.logger.warning('当前用户被禁止登录')
+            return exceptions.AccountDisabled().dict
 
-    elif g.current_user.get('isDisabled'):
-        current_app.logger.warning(str(exceptions.AccountDisabled()))
-        return exceptions.AccountDisabled().dict
-    else:
-        current_app.logger.info('权限验证成功')
     # 默认提取请求体
     g.json_data = get_json_body()
-
 
 
 
@@ -157,8 +151,13 @@ def before_request():
 @api_bp.after_request
 def af_request(response):
     data = json.loads(response.get_data())
-    if not data.get('RequestID'):
-        data['RequestID'] = g.request_id
+    # 确保必然含有返回值
+    if not data:
+        data = {'RequestID' : g.request_id }
+    else:
+        if not data.get('RequestID'):
+            data['RequestID'] = g.request_id
+
     data = jsonify(data).get_data()
     response.set_data(data)
     return response

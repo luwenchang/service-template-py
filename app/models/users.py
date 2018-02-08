@@ -10,14 +10,14 @@ class User(db.Model, TableBase):
     __tablename__ = 'users'
 
     id = db.Column(db.String(65), index=True, unique=True)
-    nickname = db.Column(db.String(128), index=True, unique=True)
-    email = db.Column(db.String(128), index=True, unique=True)
-    mobile = db.Column(db.String(32), index=True, unique=True)
-    note = db.Column(db.Text)
-    name = db.Column(db.String(128))
-    intro = db.Column(db.Text)
-    head_portrait = db.Column(db.Text)
-    is_disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    nickname = db.Column(db.String(128), index=True, unique=True, comment='昵称')
+    email = db.Column(db.String(128), index=True, unique=True, comment='邮件地址')
+    mobile = db.Column(db.String(32), index=True, unique=True, comment='移动电话')
+    note = db.Column(db.Text, comment='备注信息')
+    name = db.Column(db.String(128), comment='姓名')
+    intro = db.Column(db.Text, comment='个人简介')
+    head_portrait = db.Column(db.Text, comment='用户头像地址')
+    is_disabled = db.Column(TINYINT(display_width=1), nullable=False, default=0, comment='帐号是否被禁用')
 
 
     #
@@ -45,8 +45,8 @@ class UserLocalAuth(db.Model, TableBase):
     __tablename__ = 'userLocalAuth'
 
     user_id = db.Column(db.ForeignKey('users.id'), index=True, primary_key=True)
-    xname = db.Column(db.String(65), nullable=False, unique=True)
-    password_hash = db.Column(db.String(65))
+    xname = db.Column(db.String(65), nullable=False, unique=True, comment='系统自定分配的用户名盐')
+    password_hash = db.Column(db.String(65), comment='用户加密后的密码')
 
 
     def __repr__(self):

@@ -14,6 +14,7 @@ from app.models.users import User, UserLocalAuth
 from app.utils.auth import get_password_md5
 from tests.common import APITest
 
+import forgery_py
 
 from datetime import datetime
 import uuid
@@ -41,18 +42,18 @@ class TokenAPITestCase(APITest):
         u1 = user_list[0]
 
         u1_login_info = u1.local_login.first()
-        self.assertTrue(u1_login_info.verify_password(get_password_md5(u1.nickname)))
+        self.assertTrue(u1_login_info.verify_password(get_password_md5(self.default_password)))
         self.assertFalse(u1_login_info.verify_password(get_password_md5('121212')))
 
 
     def test_user_reset_password(self):
         '''验证密码重置后的有效性'''
-        user_id_list = self.add_users(1)
-        u = User.query.filter_by(id=user_id_list[0]).first()
+        user_list = self.add_users(1)
+        u = User.query.filter_by(email=user_list[0].get('email')).first()
 
         login_info = u.local_login.first()
         # 验证原始密码 有效
-        self.assertTrue(login_info.verify_password(get_password_md5(u.nickname)))
+        self.assertTrue(login_info.verify_password(get_password_md5(self.default_password)))
 
         # 重置用户密码
         login_info.reset_password(get_password_md5('12ABC'))
@@ -61,7 +62,7 @@ class TokenAPITestCase(APITest):
         # 验证新密码有效
         self.assertTrue(login_info.verify_password(get_password_md5('12ABC')))
         # 验证原密码无效
-        self.assertFalse(login_info.verify_password(get_password_md5(u.nickname)))
+        self.assertFalse(login_info.verify_password(get_password_md5(self.default_password)))
 
 
 
@@ -83,6 +84,46 @@ class TokenAPITestCase(APITest):
         new_user_list = User.query.filter_by(id=u.id).all()
 
         self.assertTrue(len(new_user_list) == 0)
+
+
+    def test_user_set(self):
+        '''验证 设置用户个人信息的有效性'''
+        self.add_users(10)
+
+        user_list = User.query.all()
+
+        u = user_list[8]
+
+        # 旧的用户信息
+        old_info = u.to_dict()
+
+        # 待更新的信息
+        update_info = {
+            'intro': forgery_py.currency.description(),
+            'note': '{}x{}'.format(forgery_py.internet.user_name(), forgery_py.internet.cctld())
+        }
+
+
+        # 更新用户信息 SetUser
+        response = self.client.post(
+            '/wwwapi/v1/SetUser',
+            headers=self.get_api_headers(auth_type='email-password', account=old_info.get('email'),
+                                         password=get_password_md5(self.default_password)),
+            data= json.dumps(update_info)
+        )
+        self.assertTrue(response.status_code == 200)
+
+        # 重新获取用户信息
+        response = self.client.post(
+            '/wwwapi/v1/GetUser',
+            headers=self.get_api_headers(auth_type='email-password', account=old_info.get('email'),
+                                         password=get_password_md5(self.default_password))
+        )
+        self.assertTrue(response.status_code == 200)
+        res = json.loads(response.data)
+        for k, v in update_info.items():
+            self.assertTrue(res.get('User', {}).get(k) == v)
+
 
     #
     #

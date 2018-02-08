@@ -4,7 +4,7 @@ __author__ = 'vincent'
 
 import os
 import logging.handlers
-
+import click
 
 from app.utils.loggers import log_hander
 import sys
@@ -27,20 +27,37 @@ if log_hander not in app.logger.handlers:
 
 app.logger.setLevel(logging.DEBUG)
 
-# 加载一些命令行工具包
-manager = Manager(app)
 
+@app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, User=User)
-# 命令行工具- 新增一个命令行参数 shell ，自动加载 对象
-manager.add_command('shell', Shell(make_context=make_shell_context))
+    return dict(
+        db=db,
+        User=User
+    )
 
 
-# 命令行工具- 添加一个命令行参数 db 加载数据库迁移命令
-manager.add_command('db', MigrateCommand)
+
+# # 加载一些命令行工具包
+# manager = Manager(app)
+#
+# def make_shell_context():
+#     return dict(app=app, db=db, User=User)
+# # 命令行工具- 新增一个命令行参数 shell ，自动加载 对象
+# manager.add_command('shell', Shell(make_context=make_shell_context))
+#
+# # 命令行工具- 添加一个命令行参数 db 加载数据库迁移命令
+# manager.add_command('db', MigrateCommand)
 
 
-@manager.command
+@app.cli.command()
+def initdb():
+    """Initialize the database."""
+    click.echo('初始化数据库-开始')
+    db.drop_all()
+    db.create_all()
+    click.echo('初始化数据库-结束')
+
+@app.cli.command()
 def test():
     """运行这个单元测试"""
 
@@ -51,7 +68,7 @@ def test():
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
-if __name__ == '__main__':
-    manager.run()
+# if __name__ == '__main__':
+#     manager.run()
 
 
