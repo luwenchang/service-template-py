@@ -1,0 +1,40 @@
+# nvm
+if [ -f ~/.nvm/nvm.sh ]; then
+    . ~/.nvm/nvm.sh
+fi
+# 当前环境名称
+host_name="我的程序环境"
+# 显示git目录，显示git stash状态，显示未受git管理的文件
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWUPSTREAM="verbose git svn"
+# 终端提示符显示当前分支名称
+# 颜色如下:
+none="\033[0m"
+black="\033[0;30m"
+black_light="\033[1;30m"
+red="\033[0;31m"
+red_light="\033[1;31m"
+green="\033[0;32m"
+green_light="\033[1;32m"
+yellow="\033[0;33m"
+yellow_light="\033[1;33m"
+blue="\033[0;34m"
+blue_light="\033[1;34m"
+purple="\033[0;35m"
+purple_light="\033[1;35m"
+cyan="\033[0;36m"
+cyan_light="\033[1;36m"
+gray="\033[0;37m"
+gray_light="\033[1;37m"
+export PS1=$red_light'(\u)'$cyan_light'[${host_name}]'$green_light'\t '$red_light'>>'$yellow_light'>>'$green_light'>> [\W'$red_light'$(__git_ps1 " ...(%s)")'$green_light']'$none'\n> \$ '
+
+# 通用别名
+
+export RUNNING_STAGE="onlineTestDev"
+export REDIS_HOST="127.0.0.1"
+export REDIS_PORT="6379"
+export REDIS_DB_NUM=2
+export SERVICE_CONFIG_PATH='/home/dev/configs/service-config.yml'
+clear;

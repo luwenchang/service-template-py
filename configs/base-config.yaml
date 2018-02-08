@@ -1,0 +1,45 @@
+# 平滑关机选项
+smoothShutDownSwitchName: 'shutDownService'
+
+
+
+AES:
+  key: '49d4f23dd01a4c4497ebfd0179356970' # 此为默认值，可随机设置
+  iv : '49d4f23dd01a4c4497ebfd0179356970' # 此为默认值，可随机设置
+
+webServer:
+  secret: 'f2d82a946ba0484c8ea42b9ad0ae9c91f2d82a946ba0484c8ea42b9ad0ae9c91'   # 此为默认值，可随机设置
+  str_format: 'a{0}b{1}c{2}defg'  # 固定三个变量，顺序随机可变 '{0}{1}{2}'.format(x,x,x)
+  token_secret: '3979ad8c57e940ed9436fdcb131c44ad88fd1b56bd1943009ad3d53e5f14119b'  # 此为默认值，可随机设置
+
+# 数据库配置
+mysql:
+  host              : '<host>'
+  port              : <port>
+  user              : '<user>'
+  password          : '<password>'
+  database          : '<dbName>'
+  connectionLimit   : 5       # 连接池大小
+  acquireTimeout    : 30000   # 超时时间
+  multipleStatements: true    # 允许多条SQL语句
+  timezone          : '+0:00' # 时区
+
+# Redis配置
+redis:
+  host    : '<ip>'
+  port    : <port>
+  db      : <number>
+  password: <password>
+
+# 邮件服务器
+mailServer:
+  retry: 5
+  retryTimeout: 1
+  senderName:
+    zh: '中文Demo名'
+    en: '英文Demo名'
+  smtp:
+    host    : '<ip>'
+    port    : <port>
+    user    : '<user>'
+    password: '<password>'

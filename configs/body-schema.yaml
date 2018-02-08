@@ -1,0 +1,147 @@
+example:
+  username:
+    type: string
+
+  type:
+    nullable: True     #$allowNull
+    allowed:     # $in
+      - 'zhuyunOperator'
+      - 'labOwner'
+      - 'distributor'
+  labVersion:
+    type: string
+    nullable: True     #$allowNull
+    allowed:     # $in
+      - 'base'
+      - 'pro'
+      - 'custom'
+  labName:
+    nullable: True     #$allowNull
+    maxlength: 100
+  username:
+    minlength: 1
+    maxlength: 128
+    regex: '^[a-z][a-zA-Z0-9\-_]{0,127}'
+  password:
+    $isLength: 32
+  email:
+    nullable: True     #$allowNull
+    maxlength: 128
+    isEmail: True
+  mobile:
+    nullable: True     #$allowNull
+    $isLength: 11
+  name:
+    nullable: True     #$allowNull
+    maxlength: 512
+  company:
+    nullable: True     #$allowNull
+    maxlength: 512
+  resourcePoolId:
+    $isLength: 32
+  labUserCountQuota:
+    $isPositiveIntegerOrZero: True
+    max: 1000000
+  isDisabled:
+    allowed:     # $in
+      - 1
+      - 0
+
+
+test:
+  todo:
+    get:
+      todo_id:
+        type: string
+    post:
+      todo_id:
+        type: string
+      task:
+        type: email
+    put:
+      todo_id:
+        type: string
+      task:
+        type: email
+
+
+
+user:
+  AddUser:
+    nickname:
+      type: 'string'
+      required: True     # 这个参数必填
+      nullable: False    # True：允许为空   False：不允许为空
+    password:
+      type: 'string'
+      required: True     # 这个参数必填
+      nullable: True
+      minlength: 32      # 设置字符串最小长度
+      maxlength: 128     # 设置字符串最大长度
+    email:
+      type: 'email'
+      required: True     # 这个参数必填
+      nullable: False     # True：允许为空   False：不允许为空
+      maxlength: 128
+    mobile:
+      required: True     # 这个参数必填
+      regex: '^[0-9]{3,15}'
+      nullable: False     # True：允许为空   False：不允许为空
+      islength: 11
+    name:
+      type: 'string'
+      nullable: False     # True：允许为空   False：不允许为空
+      minlength: 3        # 设置字符串最小长度
+      maxlength: 512      # 设置字符串最大长度
+    intro:
+      type: 'string'
+      nullable: True     # True：允许为空   False：不允许为空
+      maxlength: 10000   # 设置字符串最大长度
+
+    head_portrait:
+      type: 'string'
+      nullable: True     # True：允许为空   False：不允许为空
+      maxlength: 200
+
+
+  SetUser:
+    nickname:
+      type: 'string'
+      nullable: True
+    email:
+      type: 'email'
+      nullable: True     #$allowNull
+      maxlength: 128
+    mobile:
+      regex: '^[0-9]{3,15}'
+      nullable: True     #$allowNull
+      islength: 11
+    name:
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 512
+    intro:
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 10000
+
+    head_portrait:
+      type: 'string'
+      nullable: True     #$allowNull
+      maxlength: 200
+
+  GetUser:
+    id:
+      type: string
+      islength: 4
+
+    usertype:
+      type: string
+      allowed:
+        - Basic
+        - Intermediate
+        - Advanced
+
+    email:
+      type: email
+

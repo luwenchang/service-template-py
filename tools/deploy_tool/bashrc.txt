@@ -1,0 +1,8 @@
+
+
+# 终端友好提示配置
+# 在 ~/.bashrc 文件末尾添加如下代码
+if [ -f ~/.bash_profile ]; then
+    . ~/.bash_profile
+fi
+
