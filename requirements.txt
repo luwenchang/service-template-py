@@ -29,7 +29,7 @@ functools32==3.2.3.post2
 gevent==1.2.2
 greenlet==0.4.12
 gunicorn==19.7.1
-httpie==0.9.9
+httpie==1.0.3
 idna==2.6
 inflect==0.2.5
 ipython==5.5.0
